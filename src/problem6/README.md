@@ -89,7 +89,20 @@ CREATE TABLE score_logs (
 
 ---
 
-### 3. Comments for Improvement
+### 3. Data Recovery & Cache Hydration
+
+If Redis loses data (crash, restart, or memory wipe), the leaderboard can be fully reconstructed from the PostgreSQL `score_logs` table, which acts as the Source of Truth.
+
+**Hydration Strategy:**
+1.  **Query:** `SELECT user_id, SUM(points) as total_score FROM score_logs GROUP BY user_id`
+2.  **Bulk Load:** Iterate through results and execute `ZADD global_leaderboard <total_score> <user_id>` in Redis.
+3.  **Optimization:** Use Redis Pipelining to batch commands for performance.
+
+This process should be triggered:
+*   **On Startup:** If the Redis key is missing.
+*   **Periodically:** To reconcile any potential drift.
+
+### 4. Comments for Improvement
 
 * **Reconciliation Worker:** To handle rare edge cases where the server crashes *after* writing to SQL but *before* updating Redis, implement a nightly cron job. This job should sum the SQL logs and overwrite the Redis leaderboard (`ZADD`) to ensure eventual consistency.
 * **Broadcast Throttling:** Under high load, broadcasting on every single update is wasteful. Implement a "debounce" mechanism to broadcast the leaderboard state at most once every 500ms-1000ms.
