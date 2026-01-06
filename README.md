@@ -16,5 +16,3 @@ The solutions are organized by problem number in the `src` directory:
 *   **[Problem 5](src/problem5)**: Backend Server Implementation
 *   **[Problem 6](src/problem6)**: System Architecture & Module Specification (Live Scoreboard)
 
----
-*Generated for the code challenge submission.*
