@@ -1,5 +1,7 @@
 # Live Scoreboard Module
 
+![Execution Flow Diagram](flow_of_execution.png)
+
 ## Overview
 
 This module handles secure score ingestion and real-time leaderboard broadcasting. It implements a **CQRS (Command Query Responsibility Segregation)** pattern where:
